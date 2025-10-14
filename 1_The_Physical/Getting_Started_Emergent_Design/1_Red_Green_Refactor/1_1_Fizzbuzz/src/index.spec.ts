@@ -9,7 +9,7 @@ describe("fizzbuzz", () => {
 
     // 3 -> Fizz
     // 5 -> Buzz
-    // 15 -> FizzBuss 
+    // 15 -> FizzBuzz
     it.each([
         { input: 3, output: "Fizz", msg: "divisible by 3" },
         { input: 6, output: "Fizz", msg: "divisible by 3" },

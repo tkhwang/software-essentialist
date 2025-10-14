@@ -8,27 +8,13 @@ describe('palindrome checker', () => {
         palindromeChecker = new PalindromeChecker();
     })
 
-    it('should return true if the word is "mom"', () => {
-        const result = palindromeChecker.isPalindrome("mom");
-
-        expect(result).toBe(true);
-    })
-
-    it('should return true if the word is "Mom"', () => {
-        const result = palindromeChecker.isPalindrome("mom");
-
-        expect(result).toBe(true);
-    })
-
-    it('should return true if the word is "bill"', () => {
-        const result = palindromeChecker.isPalindrome("bill");
-
-        expect(result).toBe(false);
-    })
-
-    it('should return true if the word is "Bill"', () => {
-        const result = palindromeChecker.isPalindrome("bill");
-
-        expect(result).toBe(false);
-    })
+    it.each([
+        { word: 'mom', expected: true },
+        { word: 'Mom', expected: true },
+        { word: 'bill', expected: false },
+        { word: 'Bill', expected: false },
+    ])('should return $expected for "$word"', ({ word, expected }) => {
+        const result = palindromeChecker.isPalindrome(word);
+        expect(result).toBe(expected);
+    });
 })
