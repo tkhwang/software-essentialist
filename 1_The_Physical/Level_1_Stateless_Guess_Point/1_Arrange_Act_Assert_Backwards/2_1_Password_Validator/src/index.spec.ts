@@ -22,31 +22,41 @@ describe('password validator', () => {
     passwordValidator = new PasswordValidator();
   })
 
-  it('should return failure if a password is "1234".', () => {
-    const password = '1234';
+  it.each([
+    {
+      password: 'maxwell1_c',
+      result: false,
+      errors: [
+        'PASSWORD_SHOULD_CONTAIN_AT_LEAST_ONE_UPPER_CASE_LETTER',
+      ]
+    },
+    {
+      password: 'maxwellTheBe',
+      result: false,
+      errors: [
+        'PASSWORD_SHOULD_CONTAIN_AT_LEAST_ONE_DIGIT',
+      ]
+    },
+    {
+      password: 'thePhysical1234567',
+      result: false,
+      errors: [
+        'PASSWORD_SHOULD_BE_BETWEEN_5_AND_15_CHARACTERS_LONG',
+      ]
+    },
+    {
+      password: 'Password123',
+      result: true,
+      errors: []
+    },
 
+  ])('should return $expected for "$password"', ({ password, result: expectedResult, errors: expectedErrors }) => {
     const { result, errors } = passwordValidator.validate(password);
 
-    expect(result).toBe(false);
-    expect(errors).toContain('PASSWORD_SHOULD_BE_BETWEEN_5_AND_15_CHARACTERS_LONG');
-  })
+    expect(result).toBe(expectedResult);
 
-  it('should return failure if a password is "1234567890123456".', () => {
-    const password = '1234567890123456';
-
-    const { result, errors } = passwordValidator.validate(password);
-
-    expect(result).toBe(false);
-    expect(errors).toContain('PASSWORD_SHOULD_BE_BETWEEN_5_AND_15_CHARACTERS_LONG');
-  })
-
-  it('should return failure if a password is "password".', () => {
-    const password = 'password';
-
-    const { result, errors } = passwordValidator.validate(password);
-
-    expect(result).toBe(false);
-    expect(errors).toContain('PASSWORD_SHOULD_CONTAIN_AT_LEAST_ONE_DIGIT');
+    expect(errors).toEqual(expect.arrayContaining(expectedErrors));
+    expect(errors).toHaveLength(expectedErrors.length);
   })
 })
 
