@@ -8,20 +8,14 @@ export type StatsCalculatorResult = {
 
 export class StatsCalculator {
     static calculate(sequence: number[]): StatsCalculatorResult {
+        const numberOfSequence = sequence.length;
+
         let min = Infinity;
         let max = -Infinity;
         let sum = 0;
-        let numberOfSequence = 0;
         let average = 0;
 
-        if (sequence.length === 0) {
-            return {
-                min,
-                max,
-                numberOfSequence,
-                average,
-            };
-        }
+        if (numberOfSequence === 0) return { min, max, numberOfSequence, average };
 
         for (const value of sequence) {
             if (value < min) min = value;
@@ -29,7 +23,6 @@ export class StatsCalculator {
             sum += value;
         }
 
-        numberOfSequence = sequence.length;
         average = Number((sum / numberOfSequence).toFixed(12));
 
         return {
