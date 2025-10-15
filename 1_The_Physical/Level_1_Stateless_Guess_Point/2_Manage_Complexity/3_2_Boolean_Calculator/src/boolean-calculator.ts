@@ -5,32 +5,37 @@ const PAREN_EXPRESSION = /\([^()]+\)/;
 
 export class BooleanCalculator {
     static evaluate(expression: string): boolean {
-        expression = expression.toLowerCase();
+        expression = expression.toLowerCase().trim();
 
         while (PAREN_EXPRESSION.test(expression)) {
             expression = expression.replace(PAREN_EXPRESSION, (match) => {
-                const subExpression = match.slice(1, match.length - 1).trim();
+                const subExpression = match.slice(1, -1);
                 return String(this.evaluate(subExpression));
-            });
+            }).trim();
         }
 
-        if (expression.includes(AND_OPERATOR)) {
-            const [left, right] = expression.split(AND_OPERATOR);
-            if (!left || !right) throw new Error("Invalid Expression");
-
-            return this.evaluate(left) && this.evaluate(right);
+        if (expression.startsWith("not ")) {
+            return !this.evaluate(expression.substring(4));
         }
 
-        if (expression.includes(OR_OPERATOR)) {
-            const [left, right] = expression.split(OR_OPERATOR);
-            if (!left || !right) throw new Error("Invalid Expression");
-
+        const orIndex = expression.lastIndexOf(OR_OPERATOR);
+        if (orIndex > -1) {
+            const left = expression.slice(0, orIndex);
+            const right = expression.slice(orIndex + OR_OPERATOR.length);
+            if (!left.trim() || !right.trim()) throw new Error("Invalid Expression");
             return this.evaluate(left) || this.evaluate(right);
         }
 
-        if (expression === "not true") return false;
-        if (expression === "not false") return true;
+        const andIndex = expression.lastIndexOf(AND_OPERATOR);
+        if (andIndex > -1) {
+            const left = expression.slice(0, andIndex);
+            const right = expression.slice(andIndex + AND_OPERATOR.length);
+            if (!left.trim() || !right.trim()) throw new Error("Invalid Expression");
+            return this.evaluate(left) && this.evaluate(right);
+        }
+
         if (expression === "true") return true;
+        if (expression === "false") return false;
 
         return false;
     }
