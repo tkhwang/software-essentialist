@@ -23,11 +23,20 @@ export class StatsCalculator implements IStatsCalculator {
     }
 
     private static calculateStats(sequence: number[]): StatsCalculatorResult {
-        if (sequence.length === 0) throw new Error('Sequence is empty');
-
         let min = Infinity;
         let max = -Infinity;
         let sum = 0;
+        let numberOfSequence = 0;
+        let average = 0;
+
+        if (sequence.length === 0) {
+            return {
+                min,
+                max,
+                numberOfSequence,
+                average,
+            };
+        }
 
         for (const value of sequence) {
             if (value < min) min = value;
@@ -35,8 +44,8 @@ export class StatsCalculator implements IStatsCalculator {
             sum += value;
         }
 
-        const numberOfSequence = sequence.length;
-        const average = Number((sum / numberOfSequence).toFixed(12));
+        numberOfSequence = sequence.length;
+        average = Number((sum / numberOfSequence).toFixed(12));
 
         return {
             min,

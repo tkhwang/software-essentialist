@@ -1,20 +1,17 @@
 import { StatsCalculator } from "./stats-calcurator";
 
 describe('stats calculator', () => {
-    describe('For empty sequence', () => {
-        it('should throw an error', () => {
-            expect(() => StatsCalculator.calculate([])).toThrow('Sequence is empty');
-        });
-    });
+    it.each<[number[], { min: number; max: number; numberOfSequence: number; average: number }]>([
+        [[], { min: Infinity, max: -Infinity, numberOfSequence: 0, average: 0 }],
+        [[2, 4, 21, -8, 53, 40], { min: -8, max: 53, numberOfSequence: 6, average: 18.666666666667 }],
+        [[1, 2, 3, 4, 5], { min: 1, max: 5, numberOfSequence: 5, average: 3 }],
+        [[-10, 0, 10], { min: -10, max: 10, numberOfSequence: 3, average: 0 }],
+    ])('should return the correct statistics', (sequence, expected) => {
+        const { min, max, numberOfSequence, average } = StatsCalculator.calculate(sequence);
 
-    describe('For valid sequence', () => {
-        it('should return the correct statistics', () => {
-            const { min, max, numberOfSequence, average } = StatsCalculator.calculate([2, 4, 21, -8, 53, 40]);
-
-            expect(min).toBe(-8);
-            expect(max).toBe(53);
-            expect(numberOfSequence).toBe(6);
-            expect(average).toBe(18.666666666667);
-        });
+        expect(min).toBe(expected.min);
+        expect(max).toBe(expected.max);
+        expect(numberOfSequence).toBe(expected.numberOfSequence);
+        expect(average).toBe(expected.average);
     });
-})
+});
