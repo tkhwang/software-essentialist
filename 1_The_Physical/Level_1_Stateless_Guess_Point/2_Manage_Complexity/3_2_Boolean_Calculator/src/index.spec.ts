@@ -42,6 +42,7 @@ describe('boolean calculator', () => {
         it.each([
             { inputText: "(TRUE OR TRUE OR TRUE) AND FALSE", expected: false },
             { inputText: "NOT (TRUE AND TRUE)", expected: false },
+            { inputText: "NOT (TRUE AND FALSE)", expected: true },
             { inputText: "(TRUE AND FALSE) OR (TRUE AND TRUE)", expected: true },
             { inputText: "(TRUE AND FALSE OR TRUE) OR (TRUE AND TRUE AND FALSE)", expected: true },
             { inputText: "(FALSE OR FALSE) AND (TRUE OR FALSE)", expected: false },
