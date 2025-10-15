@@ -1,11 +1,4 @@
 
-
-
-
-export interface IStatsCalculator {
-    calculate(sequence: number[]): StatsCalculatorResult;
-}
-
 export type StatsCalculatorResult = {
     min: number;
     max: number;
@@ -13,16 +6,8 @@ export type StatsCalculatorResult = {
     average: number;
 };
 
-export class StatsCalculator implements IStatsCalculator {
-    calculate(sequence: number[]): StatsCalculatorResult {
-        return StatsCalculator.calculateStats(sequence);
-    }
-
+export class StatsCalculator {
     static calculate(sequence: number[]): StatsCalculatorResult {
-        return StatsCalculator.calculateStats(sequence);
-    }
-
-    private static calculateStats(sequence: number[]): StatsCalculatorResult {
         let min = Infinity;
         let max = -Infinity;
         let sum = 0;
