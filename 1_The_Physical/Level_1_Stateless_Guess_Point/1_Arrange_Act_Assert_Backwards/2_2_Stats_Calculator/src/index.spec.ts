@@ -1,4 +1,4 @@
-import { StatsCalculator } from "./stats-calcurator";
+import { StatsCalculator } from "./stats-calculator";
 
 describe('stats calculator', () => {
     it.each<[number[], { min: number; max: number; numberOfSequence: number; average: number }]>([
