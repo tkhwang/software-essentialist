@@ -10,7 +10,7 @@ export type PasswordValidatorResult = {
 
 export class PasswordValidator {
 
-    validate(password: string): PasswordValidatorResult {
+    static validate(password: string): PasswordValidatorResult {
         const errors: PASSWORD_VALIDATOR_ERRORS[] = [];
 
         const passwordLength = password.length;

@@ -78,16 +78,10 @@ describe('password validator', () => {
     },
   ];
 
-  let passwordValidator: PasswordValidator;
-
-  beforeEach(() => {
-    passwordValidator = new PasswordValidator();
-  });
-
   it.each(validationCases)(
     'should return $expectedResult when $description (password: "$password")',
     ({ password, expectedResult, expectedErrors }) => {
-      const { result, errors } = passwordValidator.validate(password);
+      const { result, errors } = PasswordValidator.validate(password);
 
       expect(result).toBe(expectedResult);
 
