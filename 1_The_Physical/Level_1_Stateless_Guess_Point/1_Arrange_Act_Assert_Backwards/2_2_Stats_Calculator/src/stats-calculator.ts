@@ -25,11 +25,6 @@ export class StatsCalculator {
 
         average = Number((sum / numberOfSequence).toFixed(12));
 
-        return {
-            min,
-            max,
-            numberOfSequence,
-            average,
-        };
+        return { min, max, numberOfSequence, average };
     }
 }
