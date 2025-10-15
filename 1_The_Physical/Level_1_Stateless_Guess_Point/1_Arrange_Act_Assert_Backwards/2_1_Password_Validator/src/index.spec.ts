@@ -39,5 +39,14 @@ describe('password validator', () => {
     expect(result).toBe(false);
     expect(errors).toContain('PASSWORD_SHOULD_BE_BETWEEN_5_AND_15_CHARACTERS_LONG');
   })
+
+  it('should return failure if a password is "password".', () => {
+    const password = 'password';
+
+    const { result, errors } = passwordValidator.validate(password);
+
+    expect(result).toBe(false);
+    expect(errors).toContain('PASSWORD_SHOULD_CONTAIN_AT_LEAST_ONE_DIGIT');
+  })
 })
 
