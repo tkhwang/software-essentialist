@@ -12,6 +12,6 @@ describe('stats calculator', () => {
         expect(min).toBe(expected.min);
         expect(max).toBe(expected.max);
         expect(numberOfSequence).toBe(expected.numberOfSequence);
-        expect(average).toBe(expected.average);
+        expect(average).toBeCloseTo(expected.average, 12);
     });
 });
