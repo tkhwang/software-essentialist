@@ -62,5 +62,3 @@ export class AssignmentController {
         }
     };
 }
-
-export const assignmentController = new AssignmentController();

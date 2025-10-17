@@ -1,14 +1,19 @@
 import express from 'express';
-import { studentController } from './students/student.controller';
-import { assignmentController } from './assignments/assignment.controller';
-import { classController } from './classes/class.controller';
-import { studentAssignmentController } from './student-assignment/student-assignment.controller';
+import { StudentController } from './students/student.controller';
+import { AssignmentController } from './assignments/assignment.controller';
+import { ClassController } from './classes/class.controller';
+import { StudentAssignmentController } from './student-assignment/student-assignment.controller';
 
 const cors = require('cors');
 export const app = express();
 
 app.use(express.json());
 app.use(cors());
+
+const studentController = new StudentController();
+const assignmentController = new AssignmentController();
+const classController = new ClassController();
+const studentAssignmentController = new StudentAssignmentController();
 
 app.use('/students', studentController.router);
 app.use('/assignments', assignmentController.router);

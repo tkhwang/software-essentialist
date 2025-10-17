@@ -127,5 +127,3 @@ export class StudentAssignmentController {
         }
     };
 }
-
-export const studentAssignmentController = new StudentAssignmentController();

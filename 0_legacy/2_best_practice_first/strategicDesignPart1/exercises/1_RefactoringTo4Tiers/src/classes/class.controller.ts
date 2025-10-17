@@ -121,5 +121,3 @@ export class ClassController {
         }
     };
 }
-
-export const classController = new ClassController();
