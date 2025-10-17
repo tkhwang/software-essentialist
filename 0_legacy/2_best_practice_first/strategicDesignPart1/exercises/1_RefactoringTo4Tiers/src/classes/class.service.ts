@@ -2,6 +2,8 @@ import { ErrorExceptionType, ServiceError } from '../common/error/errors';
 import { ClassRepository } from './class.repository';
 import { StudentRepository } from '../students/student.repository';
 import { AssignmentRepository } from '../assignments/assignment.repository';
+import { CreateClassDto } from './dto/create-class.dto';
+import { EnrollStudentDto } from './dto/enroll-student.dto';
 
 export class ClassService {
     constructor(
@@ -10,11 +12,12 @@ export class ClassService {
         private readonly assignmentRepository: AssignmentRepository
     ) { }
 
-    async createClass(name: string) {
-        return this.classRepository.create(name);
+    async createClass(createClassDto: CreateClassDto) {
+        return this.classRepository.create(createClassDto.name);
     }
 
-    async enrollStudent(studentId: string, classId: string) {
+    async enrollStudent(enrollStudentDto: EnrollStudentDto) {
+        const { studentId, classId } = enrollStudentDto;
         const [student, cls] = await Promise.all([
             this.studentRepository.findById(studentId),
             this.classRepository.findById(classId)

@@ -3,6 +3,8 @@ import { ErrorExceptionType } from '../common/error/errors';
 import { isMissingKeys, isUUID, parseForResponse } from '../utils';
 import { ClassService } from './class.service';
 import { ErrorExceptionHandler } from '../common/error/error-handler';
+import { CreateClassDto } from './dto/create-class.dto';
+import { EnrollStudentDto } from './dto/enroll-student.dto';
 
 export class ClassController {
     public readonly router = Router();
@@ -27,13 +29,9 @@ export class ClassController {
     }
 
     private createClass = async (req: Request, res: Response, next: NextFunction) => {
-        if (isMissingKeys(req.body, ['name'])) {
-            return res.status(400).json({ error: ErrorExceptionType.ValidationError, data: undefined, success: false });
-        }
-
         try {
-            const { name } = req.body;
-            const cls = await this.classService.createClass(name);
+            const createClassDto = CreateClassDto.fromRequest(req.body);
+            const cls = await this.classService.createClass(createClassDto);
             res.status(201).json({ error: undefined, data: parseForResponse(cls), success: true });
         } catch (error) {
             next(error);
@@ -41,13 +39,9 @@ export class ClassController {
     };
 
     private enrollStudent = async (req: Request, res: Response, next: NextFunction) => {
-        if (isMissingKeys(req.body, ['studentId', 'classId'])) {
-            return res.status(400).json({ error: ErrorExceptionType.ValidationError, data: undefined, success: false });
-        }
-
         try {
-            const { studentId, classId } = req.body;
-            const classEnrollment = await this.classService.enrollStudent(studentId, classId);
+            const enrollStudentDto = EnrollStudentDto.fromRequest(req.body);
+            const classEnrollment = await this.classService.enrollStudent(enrollStudentDto);
             res.status(201).json({ error: undefined, data: parseForResponse(classEnrollment), success: true });
         } catch (error) {
             next(error);

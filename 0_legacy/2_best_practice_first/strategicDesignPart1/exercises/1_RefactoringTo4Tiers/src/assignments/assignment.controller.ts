@@ -1,8 +1,10 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { ErrorExceptionType, ServiceError, getHttpStatusForError } from '../common/error/errors';
-import { isMissingKeys, isUUID, parseForResponse } from '../utils';
+import { isUUID, parseForResponse } from '../utils';
 import { AssignmentService } from './assignment.service';
 import { ErrorExceptionHandler } from '../common/error/error-handler';
+import { CreateAssignmentDto } from './dto/create-assignment.dto';
+import { AssignStudentDTO } from './dto/assign-student.dto';
 
 export class AssignmentController {
     public readonly router = Router();
@@ -22,31 +24,24 @@ export class AssignmentController {
 
     private registerRoutes() {
         this.router.post('/', this.createAssignment);
-        this.router.get('/:id', this.getAssignmentById);
+        this.router.get('/:id', this.assignStudent);
     }
 
     private createAssignment = async (req: Request, res: Response, next: NextFunction) => {
-        if (isMissingKeys(req.body, ['classId', 'title'])) {
-            return res.status(400).json({ error: ErrorExceptionType.ValidationError, data: undefined, success: false });
-        }
-
         try {
-            const { classId, title } = req.body;
-            const assignment = await this.assignmentService.createAssignment(classId, title);
+            const createAssignmentDto = CreateAssignmentDto.fromRequest(req.body);
+            const assignment = await this.assignmentService.createAssignment(createAssignmentDto);
+
             res.status(201).json({ error: undefined, data: parseForResponse(assignment), success: true });
         } catch (error) {
             next(error);
         }
     };
 
-    private getAssignmentById = async (req: Request, res: Response, next: NextFunction) => {
-        const { id } = req.params;
-        if (!isUUID(id)) {
-            return res.status(400).json({ error: ErrorExceptionType.ValidationError, data: undefined, success: false });
-        }
-
+    private assignStudent = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const assignment = await this.assignmentService.getAssignmentById(id);
+            const assignStudentDto = AssignStudentDTO.fromRequest(req.body);
+            const assignment = await this.assignmentService.getAssignmentById(assignStudentDto);
             res.status(200).json({ error: undefined, data: parseForResponse(assignment), success: true });
         } catch (error) {
             next(error);
