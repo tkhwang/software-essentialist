@@ -1,26 +1,15 @@
-import { prisma } from '../database';
 import { Errors, ServiceError } from '../errors';
+import { AssignmentRepository } from './assignment.repository';
 
 export class AssignmentService {
+    constructor(private readonly assignmentRepository: AssignmentRepository) {}
+
     async createAssignment(classId: string, title: string) {
-        return prisma.assignment.create({
-            data: {
-                classId,
-                title
-            }
-        });
+        return this.assignmentRepository.create(classId, title);
     }
 
     async getAssignmentById(id: string) {
-        const assignment = await prisma.assignment.findUnique({
-            include: {
-                class: true,
-                studentTasks: true
-            },
-            where: {
-                id
-            }
-        });
+        const assignment = await this.assignmentRepository.findByIdWithDetails(id);
 
         if (!assignment) {
             throw new ServiceError(Errors.AssignmentNotFound);

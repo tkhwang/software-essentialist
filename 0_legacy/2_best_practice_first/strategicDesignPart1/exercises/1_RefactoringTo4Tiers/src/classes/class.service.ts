@@ -1,27 +1,23 @@
-import { prisma } from '../database';
 import { Errors, ServiceError } from '../errors';
+import { ClassRepository } from './class.repository';
+import { StudentRepository } from '../students/student.repository';
+import { AssignmentRepository } from '../assignments/assignment.repository';
 
 export class ClassService {
+    constructor(
+        private readonly classRepository: ClassRepository,
+        private readonly studentRepository: StudentRepository,
+        private readonly assignmentRepository: AssignmentRepository
+    ) {}
+
     async createClass(name: string) {
-        return prisma.class.create({
-            data: {
-                name
-            }
-        });
+        return this.classRepository.create(name);
     }
 
     async enrollStudent(studentId: string, classId: string) {
         const [student, cls] = await Promise.all([
-            prisma.student.findUnique({
-                where: {
-                    id: studentId
-                }
-            }),
-            prisma.class.findUnique({
-                where: {
-                    id: classId
-                }
-            })
+            this.studentRepository.findById(studentId),
+            this.classRepository.findById(classId)
         ]);
 
         if (!student) {
@@ -32,44 +28,22 @@ export class ClassService {
             throw new ServiceError(Errors.ClassNotFound);
         }
 
-        const duplicatedClassEnrollment = await prisma.classEnrollment.findFirst({
-            where: {
-                studentId,
-                classId
-            }
-        });
+        const duplicatedClassEnrollment = await this.classRepository.findEnrollment(studentId, classId);
 
         if (duplicatedClassEnrollment) {
             throw new ServiceError(Errors.StudentAlreadyEnrolled);
         }
 
-        return prisma.classEnrollment.create({
-            data: {
-                studentId,
-                classId
-            }
-        });
+        return this.classRepository.createEnrollment(studentId, classId);
     }
 
     async getClassAssignments(classId: string) {
-        const cls = await prisma.class.findUnique({
-            where: {
-                id: classId
-            }
-        });
+        const cls = await this.classRepository.findById(classId);
 
         if (!cls) {
             throw new ServiceError(Errors.ClassNotFound);
         }
 
-        return prisma.assignment.findMany({
-            where: {
-                classId
-            },
-            include: {
-                class: true,
-                studentTasks: true
-            }
-        });
+        return this.assignmentRepository.findByClassIdWithDetails(classId);
     }
 }

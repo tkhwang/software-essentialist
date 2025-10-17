@@ -1,39 +1,23 @@
-import { prisma } from '../database';
 import { Errors, ServiceError } from '../errors';
+import { StudentRepository } from './student.repository';
+import { StudentAssignmentRepository } from '../student-assignment/student-assignment.repository';
 
 export class StudentService {
+    constructor(
+        private readonly studentRepository: StudentRepository,
+        private readonly studentAssignmentRepository: StudentAssignmentRepository
+    ) {}
+
     async createStudent(name: string) {
-        return prisma.student.create({
-            data: {
-                name
-            }
-        });
+        return this.studentRepository.create(name);
     }
 
     async getStudents() {
-        return prisma.student.findMany({
-            include: {
-                classes: true,
-                assignments: true,
-                reportCards: true
-            },
-            orderBy: {
-                name: 'asc'
-            }
-        });
+        return this.studentRepository.findAllWithDetails();
     }
 
     async getStudentById(id: string) {
-        const student = await prisma.student.findUnique({
-            where: {
-                id
-            },
-            include: {
-                classes: true,
-                assignments: true,
-                reportCards: true
-            }
-        });
+        const student = await this.studentRepository.findByIdWithDetails(id);
 
         if (!student) {
             throw new ServiceError(Errors.StudentNotFound);
@@ -45,40 +29,17 @@ export class StudentService {
     async getSubmittedAssignments(studentId: string) {
         await this.ensureStudentExists(studentId);
 
-        return prisma.studentAssignment.findMany({
-            where: {
-                studentId,
-                status: 'submitted'
-            },
-            include: {
-                assignment: true
-            }
-        });
+        return this.studentAssignmentRepository.findSubmittedByStudent(studentId);
     }
 
     async getGradedAssignments(studentId: string) {
         await this.ensureStudentExists(studentId);
 
-        return prisma.studentAssignment.findMany({
-            where: {
-                studentId,
-                status: 'submitted',
-                grade: {
-                    not: null
-                }
-            },
-            include: {
-                assignment: true
-            }
-        });
+        return this.studentAssignmentRepository.findGradedByStudent(studentId);
     }
 
     private async ensureStudentExists(studentId: string) {
-        const student = await prisma.student.findUnique({
-            where: {
-                id: studentId
-            }
-        });
+        const student = await this.studentRepository.findById(studentId);
 
         if (!student) {
             throw new ServiceError(Errors.StudentNotFound);
