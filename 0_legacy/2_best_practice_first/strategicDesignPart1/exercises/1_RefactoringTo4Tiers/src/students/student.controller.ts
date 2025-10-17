@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { Errors, ServiceError, getHttpStatusForError } from '../errors';
+import { ErrorExceptionType, ServiceError, getHttpStatusForError } from '../common/error/errors';
 import { isMissingKeys, isUUID, parseForResponse } from '../utils';
 import { StudentService } from './student.service';
 
@@ -22,7 +22,7 @@ export class StudentController {
 
     private createStudent = async (req: Request, res: Response) => {
         if (isMissingKeys(req.body, ['name'])) {
-            return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false });
+            return res.status(400).json({ error: ErrorExceptionType.ValidationError, data: undefined, success: false });
         }
 
         try {
@@ -46,7 +46,7 @@ export class StudentController {
     private getStudentById = async (req: Request, res: Response) => {
         const { id } = req.params;
         if (!isUUID(id)) {
-            return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false });
+            return res.status(400).json({ error: ErrorExceptionType.ValidationError, data: undefined, success: false });
         }
 
         try {
@@ -60,7 +60,7 @@ export class StudentController {
     private getStudentAssignments = async (req: Request, res: Response) => {
         const { id } = req.params;
         if (!isUUID(id)) {
-            return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false });
+            return res.status(400).json({ error: ErrorExceptionType.ValidationError, data: undefined, success: false });
         }
 
         try {
@@ -74,7 +74,7 @@ export class StudentController {
     private getStudentGrades = async (req: Request, res: Response) => {
         const { id } = req.params;
         if (!isUUID(id)) {
-            return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false });
+            return res.status(400).json({ error: ErrorExceptionType.ValidationError, data: undefined, success: false });
         }
 
         try {
@@ -92,6 +92,6 @@ export class StudentController {
             return;
         }
 
-        res.status(500).json({ error: Errors.ServerError, data: undefined, success: false });
+        res.status(500).json({ error: ErrorExceptionType.ServerError, data: undefined, success: false });
     }
 }

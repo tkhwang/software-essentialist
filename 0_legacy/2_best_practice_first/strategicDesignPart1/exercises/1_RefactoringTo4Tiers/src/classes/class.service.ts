@@ -1,4 +1,4 @@
-import { Errors, ServiceError } from '../errors';
+import { ErrorExceptionType, ServiceError } from '../common/error/errors';
 import { ClassRepository } from './class.repository';
 import { StudentRepository } from '../students/student.repository';
 import { AssignmentRepository } from '../assignments/assignment.repository';
@@ -8,7 +8,7 @@ export class ClassService {
         private readonly classRepository: ClassRepository,
         private readonly studentRepository: StudentRepository,
         private readonly assignmentRepository: AssignmentRepository
-    ) {}
+    ) { }
 
     async createClass(name: string) {
         return this.classRepository.create(name);
@@ -21,17 +21,17 @@ export class ClassService {
         ]);
 
         if (!student) {
-            throw new ServiceError(Errors.StudentNotFound);
+            throw new ServiceError(ErrorExceptionType.StudentNotFound);
         }
 
         if (!cls) {
-            throw new ServiceError(Errors.ClassNotFound);
+            throw new ServiceError(ErrorExceptionType.ClassNotFound);
         }
 
         const duplicatedClassEnrollment = await this.classRepository.findEnrollment(studentId, classId);
 
         if (duplicatedClassEnrollment) {
-            throw new ServiceError(Errors.StudentAlreadyEnrolled);
+            throw new ServiceError(ErrorExceptionType.StudentAlreadyEnrolled);
         }
 
         return this.classRepository.createEnrollment(studentId, classId);
@@ -41,7 +41,7 @@ export class ClassService {
         const cls = await this.classRepository.findById(classId);
 
         if (!cls) {
-            throw new ServiceError(Errors.ClassNotFound);
+            throw new ServiceError(ErrorExceptionType.ClassNotFound);
         }
 
         return this.assignmentRepository.findByClassIdWithDetails(classId);

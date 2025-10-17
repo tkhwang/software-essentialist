@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { Errors, ServiceError, getHttpStatusForError } from '../errors';
+import { ErrorExceptionType, ServiceError, getHttpStatusForError } from '../common/error/errors';
 import { isMissingKeys, parseForResponse } from '../utils';
 import { StudentAssignmentService } from './student-assignment.service';
 
@@ -20,7 +20,7 @@ export class StudentAssignmentController {
 
     private assignStudent = async (req: Request, res: Response) => {
         if (isMissingKeys(req.body, ['studentId', 'assignmentId'])) {
-            return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false });
+            return res.status(400).json({ error: ErrorExceptionType.ValidationError, data: undefined, success: false });
         }
 
         try {
@@ -34,7 +34,7 @@ export class StudentAssignmentController {
 
     private submitAssignment = async (req: Request, res: Response) => {
         if (isMissingKeys(req.body, ['id'])) {
-            return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false });
+            return res.status(400).json({ error: ErrorExceptionType.ValidationError, data: undefined, success: false });
         }
 
         try {
@@ -48,13 +48,13 @@ export class StudentAssignmentController {
 
     private gradeAssignment = async (req: Request, res: Response) => {
         if (isMissingKeys(req.body, ['id', 'grade'])) {
-            return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false });
+            return res.status(400).json({ error: ErrorExceptionType.ValidationError, data: undefined, success: false });
         }
 
         const { id, grade } = req.body;
 
         if (!['A', 'B', 'C', 'D'].includes(grade)) {
-            return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false });
+            return res.status(400).json({ error: ErrorExceptionType.ValidationError, data: undefined, success: false });
         }
 
         try {
@@ -72,6 +72,6 @@ export class StudentAssignmentController {
             return;
         }
 
-        res.status(500).json({ error: Errors.ServerError, data: undefined, success: false });
+        res.status(500).json({ error: ErrorExceptionType.ServerError, data: undefined, success: false });
     }
 }

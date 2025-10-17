@@ -1,4 +1,4 @@
-import { Errors, ServiceError } from '../errors';
+import { ErrorExceptionType, ServiceError } from '../common/error/errors';
 import { StudentAssignmentRepository } from './student-assignment.repository';
 import { StudentRepository } from '../students/student.repository';
 import { AssignmentRepository } from '../assignments/assignment.repository';
@@ -8,7 +8,7 @@ export class StudentAssignmentService {
         private readonly studentAssignmentRepository: StudentAssignmentRepository,
         private readonly studentRepository: StudentRepository,
         private readonly assignmentRepository: AssignmentRepository
-    ) {}
+    ) { }
 
     async assignStudentToAssignment(studentId: string, assignmentId: string) {
         await this.ensureStudentExists(studentId);
@@ -33,7 +33,7 @@ export class StudentAssignmentService {
         const student = await this.studentRepository.findById(studentId);
 
         if (!student) {
-            throw new ServiceError(Errors.StudentNotFound);
+            throw new ServiceError(ErrorExceptionType.StudentNotFound);
         }
     }
 
@@ -41,7 +41,7 @@ export class StudentAssignmentService {
         const assignment = await this.assignmentRepository.findById(assignmentId);
 
         if (!assignment) {
-            throw new ServiceError(Errors.AssignmentNotFound);
+            throw new ServiceError(ErrorExceptionType.AssignmentNotFound);
         }
     }
 
@@ -49,7 +49,7 @@ export class StudentAssignmentService {
         const studentAssignment = await this.studentAssignmentRepository.findById(id);
 
         if (!studentAssignment) {
-            throw new ServiceError(Errors.AssignmentNotFound);
+            throw new ServiceError(ErrorExceptionType.AssignmentNotFound);
         }
     }
 }
