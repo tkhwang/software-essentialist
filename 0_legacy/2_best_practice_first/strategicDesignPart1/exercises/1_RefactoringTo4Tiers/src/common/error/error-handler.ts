@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 import { AssignmentNotFoundException, ClassNotFoundException, InvalidRequestBodyException, StudentAlreadyEnrolledException, StudentAssignmentNotFoundException, StudentNotFoundException } from "../exception/exceptions";
-import { ErrorExceptionType } from "./errors";
+import { ErrorExceptionType, ServiceError, getHttpStatusForError } from "./errors";
 
 export class ErrorExceptionHandler {
     public handle(
@@ -57,6 +57,16 @@ export class ErrorExceptionHandler {
         if (error instanceof StudentAssignmentNotFoundException) {
             return res.status(400).json({
                 error: ErrorExceptionType.StudentAssignmentNotFoundException,
+                data: undefined,
+                success: false,
+                message: error.message,
+            });
+        }
+
+        if (error instanceof ServiceError) {
+            const status = getHttpStatusForError(error.code);
+            return res.status(status).json({
+                error: error.code,
                 data: undefined,
                 success: false,
                 message: error.message,

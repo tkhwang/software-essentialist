@@ -32,10 +32,10 @@ const errorExceptionHandler = new ErrorExceptionHandler();
 
 // Controllers
 const controllers = {
-    studentController: new StudentController(studentService),
+    studentController: new StudentController(studentService, errorExceptionHandler),
     assignmentController: new AssignmentController(assignmentService, errorExceptionHandler),
-    classController: new ClassController(classService),
-    studentAssignmentController: new StudentAssignmentController(studentAssignmentService)
+    classController: new ClassController(classService, errorExceptionHandler),
+    studentAssignmentController: new StudentAssignmentController(studentAssignmentService, errorExceptionHandler)
 };
 
 const app = createApp(controllers);
