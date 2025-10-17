@@ -1,12 +1,14 @@
 import { Router, Request, Response } from 'express';
-import { prisma } from '../database';
-import { Errors } from '../errors';
+import { Errors, ServiceError, getHttpStatusForError } from '../errors';
 import { isMissingKeys, isUUID, parseForResponse } from '../utils';
+import { ClassService } from './class.service';
 
 export class ClassController {
     public readonly router = Router();
+    private readonly classService: ClassService;
 
-    constructor() {
+    constructor(classService: ClassService) {
+        this.classService = classService;
         this.registerRoutes();
     }
 
@@ -17,107 +19,54 @@ export class ClassController {
     }
 
     private createClass = async (req: Request, res: Response) => {
+        if (isMissingKeys(req.body, ['name'])) {
+            return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false });
+        }
+
         try {
-            if (isMissingKeys(req.body, ['name'])) {
-                return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false });
-            }
-
             const { name } = req.body;
-
-            const cls = await prisma.class.create({
-                data: {
-                    name
-                }
-            });
-
+            const cls = await this.classService.createClass(name);
             res.status(201).json({ error: undefined, data: parseForResponse(cls), success: true });
         } catch (error) {
-            res.status(500).json({ error: Errors.ServerError, data: undefined, success: false });
+            this.handleError(res, error);
         }
     };
 
     private enrollStudent = async (req: Request, res: Response) => {
+        if (isMissingKeys(req.body, ['studentId', 'classId'])) {
+            return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false });
+        }
+
         try {
-            if (isMissingKeys(req.body, ['studentId', 'classId'])) {
-                return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false });
-            }
-
             const { studentId, classId } = req.body;
-
-            const student = await prisma.student.findUnique({
-                where: {
-                    id: studentId
-                }
-            });
-
-            if (!student) {
-                return res.status(404).json({ error: Errors.StudentNotFound, data: undefined, success: false });
-            }
-
-            const cls = await prisma.class.findUnique({
-                where: {
-                    id: classId
-                }
-            });
-
-            const duplicatedClassEnrollment = await prisma.classEnrollment.findFirst({
-                where: {
-                    studentId,
-                    classId
-                }
-            });
-
-            if (duplicatedClassEnrollment) {
-                return res.status(400).json({ error: Errors.StudentAlreadyEnrolled, data: undefined, success: false });
-            }
-
-            if (!cls) {
-                return res.status(404).json({ error: Errors.ClassNotFound, data: undefined, success: false });
-            }
-
-            const classEnrollment = await prisma.classEnrollment.create({
-                data: {
-                    studentId,
-                    classId
-                }
-            });
-
+            const classEnrollment = await this.classService.enrollStudent(studentId, classId);
             res.status(201).json({ error: undefined, data: parseForResponse(classEnrollment), success: true });
         } catch (error) {
-            res.status(500).json({ error: Errors.ServerError, data: undefined, success: false });
+            this.handleError(res, error);
         }
     };
 
     private getClassAssignments = async (req: Request, res: Response) => {
+        const { id } = req.params;
+        if (!isUUID(id)) {
+            return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false });
+        }
+
         try {
-            const { id } = req.params;
-            if (!isUUID(id)) {
-                return res.status(400).json({ error: Errors.ValidationError, data: undefined, success: false });
-            }
-
-            const cls = await prisma.class.findUnique({
-                where: {
-                    id
-                }
-            });
-
-            if (!cls) {
-                return res.status(404).json({ error: Errors.ClassNotFound, data: undefined, success: false });
-            }
-
-            const assignments = await prisma.assignment.findMany({
-                where: {
-                    classId: id
-                },
-                include: {
-                    class: true,
-                    studentTasks: true
-                }
-            });
-
+            const assignments = await this.classService.getClassAssignments(id);
             res.status(200).json({ error: undefined, data: parseForResponse(assignments), success: true });
         } catch (error) {
-            res.status(500).json({ error: Errors.ServerError, data: undefined, success: false });
+            this.handleError(res, error);
         }
     };
+
+    private handleError(res: Response, error: unknown) {
+        if (error instanceof ServiceError) {
+            const status = getHttpStatusForError(error.code);
+            res.status(status).json({ error: error.code, data: undefined, success: false });
+            return;
+        }
+
+        res.status(500).json({ error: Errors.ServerError, data: undefined, success: false });
+    }
 }
