@@ -5,5 +5,5 @@
     "noEmit": true,
     "types": ["node", "jest"]
   },
-  "include": ["../src/**/*.ts", "./**/*.ts", "features/create-class-room.feature"]
+  "include": ["../src/**/*.ts", "./**/*.ts", "features/*.feature"]
 }
