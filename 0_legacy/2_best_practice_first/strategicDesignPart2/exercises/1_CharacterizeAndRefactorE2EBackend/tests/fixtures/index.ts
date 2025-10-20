@@ -1,5 +1,7 @@
+import { AssignmentBuilder } from "./assignment.builder";
 import { ClassRoomBuilder } from "./class-room.builder";
 import { EnrolledStudentBuilder } from "./enrolled-student.builder";
+import { StudentAssignemtBuilder } from "./student-assignment.build";
 import { StudentBuilder } from "./student.builder";
 
 export function aClassRoom() {
@@ -12,4 +14,12 @@ export function aStudent() {
 
 export function anEnrolledStudent() {
     return new EnrolledStudentBuilder();
+}
+
+export function anAssignment() {
+    return new AssignmentBuilder();
+}
+
+export function aStudentAssignemt() {
+    return new StudentAssignemtBuilder();
 }

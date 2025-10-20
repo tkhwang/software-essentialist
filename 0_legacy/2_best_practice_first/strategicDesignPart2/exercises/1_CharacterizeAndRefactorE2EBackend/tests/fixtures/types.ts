@@ -13,3 +13,9 @@ export interface EnrolledStudent {
     studentId: string;
     classId: string;
 }
+
+export interface Assignment {
+    id: string;
+    classId: string;
+    title: string;
+}
