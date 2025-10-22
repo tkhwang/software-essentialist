@@ -4,7 +4,6 @@ import request from 'supertest';
 import { app, Errors } from '../../src';
 import { resetDatabase } from '../fixtures/reset';
 import { aClassRoom } from '../fixtures';
-import { ClassRoom } from '../fixtures/types';
 import { Class } from '@prisma/client';
 
 const feature = loadFeature(path.join(__dirname, '../features/create-class-room.feature'));
@@ -14,7 +13,7 @@ defineFeature(feature, (test) => {
         await resetDatabase();
     });
 
-    test("Sucessfully create a class room", ({ given, when, then }) => {
+    test("Successfully create a class room", ({ given, when, then }) => {
         let requestBody: any = {};
         let response: any = {};
 

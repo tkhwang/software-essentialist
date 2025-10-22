@@ -20,10 +20,6 @@ defineFeature(feature, (test) => {
         let student: Student;
         let assignment: Assignment;
 
-        beforeAll(async () => {
-            await resetDatabase();
-        });
-
         given("There is an existing student enrolled to a class with an assignment", async () => {
             const classRoomBuilder = aClassRoom().withName("Math");
 
@@ -99,7 +95,7 @@ defineFeature(feature, (test) => {
         let studentAssignment: StudentAssignment;
 
         given("a student was already assigned an assignment", async () => {
-            const classRoomBuilder = await aClassRoom().withName("Math");
+            const classRoomBuilder = aClassRoom().withName("Math");
 
             studentAssignment = await aStudentAssignemt()
                 .from(anAssignment().from(classRoomBuilder))

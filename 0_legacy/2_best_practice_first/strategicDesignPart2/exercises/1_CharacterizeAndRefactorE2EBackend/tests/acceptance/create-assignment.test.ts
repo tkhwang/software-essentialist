@@ -15,7 +15,6 @@ defineFeature(feature, (test) => {
 
     test("Successfully create an assignment", ({ given, when, then }) => {
         let classRoom: Class;
-        let requestBody: any = {};
         let response: any = {};
 
         given("a class exists", async () => {

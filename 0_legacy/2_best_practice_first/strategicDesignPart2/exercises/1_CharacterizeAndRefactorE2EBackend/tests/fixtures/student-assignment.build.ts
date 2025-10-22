@@ -1,4 +1,3 @@
-import { EnrolledStudent } from './types';
 import { AssignmentBuilder } from "./assignment.builder";
 import { EnrolledStudentBuilder } from "./enrolled-student.builder";
 import { prisma } from '../../src/database';
@@ -21,7 +20,7 @@ export class StudentAssignmentBuilder {
     }
 
     async build() {
-        if (!this.enrolledStudentBuilder) throw new Error("you must defined the enrolled student builder")
+        if (!this.enrolledStudentBuilder) throw new Error("you must define the enrolled student builder")
         if (!this.assignmentBuilder) throw new Error("you must define the assignment builder")
 
         let assignment = await this.assignmentBuilder.build();

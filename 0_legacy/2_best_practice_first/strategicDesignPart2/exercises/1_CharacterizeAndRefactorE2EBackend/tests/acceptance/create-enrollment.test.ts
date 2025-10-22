@@ -5,7 +5,6 @@ import { app } from '../../src';
 import { resetDatabase } from '../fixtures/reset';
 import { aClassRoom, anEnrolledStudent, aStudent } from '../fixtures';
 import { Class, Student } from '@prisma/client';
-import { kMaxLength } from 'buffer';
 import { EnrolledStudent } from '../fixtures/types';
 
 const feature = loadFeature(path.join(__dirname, '../features/create-enrollment.feature'));
@@ -49,7 +48,7 @@ defineFeature(feature, (test) => {
         });
 
         when("I enroll the student to a class that doesn't exist", async () => {
-            const wrongClassIdWhichDoesNotExist = "123";
+            const wrongClassIdWhichDoesNotExist = "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11";
             response = await request(app).post("/class-enrollments").send({
                 studentId: student.id,
                 classId: wrongClassIdWhichDoesNotExist,
