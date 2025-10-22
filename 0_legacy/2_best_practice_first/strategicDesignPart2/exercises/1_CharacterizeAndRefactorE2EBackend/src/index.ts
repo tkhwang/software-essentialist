@@ -6,7 +6,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const Errors = {
+export const Errors = {
   ValidationError: "ValidationError",
   StudentNotFound: "StudentNotFound",
   ClassNotFound: "ClassNotFound",
@@ -86,12 +86,12 @@ app.post("/classes", async (req: Request, res: Response) => {
 
     const { name } = req.body;
 
-    const classroomExists = await prisma.class.findUnique({ where: { name }})
+    const classroomExists = await prisma.class.findUnique({ where: { name } })
 
     if (classroomExists) {
       return res
-      .status(409)
-      .json({ error: Errors.ClassAlreadyExists, data: undefined, success: false });
+        .status(409)
+        .json({ error: Errors.ClassAlreadyExists, data: undefined, success: false });
     }
 
     const cls = await prisma.class.create({
@@ -276,7 +276,7 @@ app.post("/student-assignments", async (req: Request, res: Response) => {
       });
     }
 
-    const alreadyAssignedAssignment = await prisma.studentAssignment.findFirst({ 
+    const alreadyAssignedAssignment = await prisma.studentAssignment.findFirst({
       where: {
         studentId: studentId,
         assignmentId: assignmentId
