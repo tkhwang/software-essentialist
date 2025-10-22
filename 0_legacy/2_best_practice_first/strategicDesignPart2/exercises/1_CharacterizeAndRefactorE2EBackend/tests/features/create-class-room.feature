@@ -14,3 +14,7 @@ Scenario: Fail to create a class room
         When I send a request to create a class room
         Then the class room should not be created
 
+Scenario: Fail to create a class room with duplicate name
+        Given there is already a class room named "Math"
+        When I send a request to create a class room
+        Then the class room should not be created

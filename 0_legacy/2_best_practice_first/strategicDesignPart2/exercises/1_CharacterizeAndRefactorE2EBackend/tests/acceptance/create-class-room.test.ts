@@ -1,8 +1,11 @@
 import { defineFeature, loadFeature } from 'jest-cucumber';
 import path from 'path';
 import request from 'supertest';
-import { app } from '../../src';
+import { app, Errors } from '../../src';
 import { resetDatabase } from '../fixtures/reset';
+import { aClassRoom } from '../fixtures';
+import { ClassRoom } from '../fixtures/types';
+import { Class } from '@prisma/client';
 
 const feature = loadFeature(path.join(__dirname, '../features/create-class-room.feature'));
 
@@ -48,5 +51,27 @@ defineFeature(feature, (test) => {
             expect(response.body.success).toBeFalsy();
             expect(response.body.error).toBe("ValidationError");
         });
+    });
+
+    test("Fail to create a class room with duplicate name", ({ given, when, then }) => {
+        let classRoom: Class;
+        let requestBody: any = {};
+        let response: any = {};
+
+        given(/^there is already a class room named "(.*)"$/, async (name) => {
+            classRoom = await aClassRoom().withName(name).build();
+            requestBody = { name };
+        });
+
+        when("I send a request to create a class room", async () => {
+            response = await request(app).post("/classes").send(requestBody);
+        });
+
+        then("the class room should not be created", () => {
+            expect(response.status).toBe(409)
+            expect(response.body.success).toBeFalsy()
+            expect(response.body.error).toBe(Errors.ClassAlreadyExists)
+        })
+
     });
 });
