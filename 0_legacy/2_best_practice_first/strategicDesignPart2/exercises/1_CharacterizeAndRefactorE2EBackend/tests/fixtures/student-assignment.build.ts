@@ -6,7 +6,7 @@ import { StudentAssignment } from '@prisma/client';
 
 
 
-export class StudentAssignemtBuilder {
+export class StudentAssignmentBuilder {
     private enrolledStudentBuilder?: EnrolledStudentBuilder;
     private assignmentBuilder?: AssignmentBuilder;
 
